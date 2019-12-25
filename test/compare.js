@@ -1,10 +1,11 @@
 const fs = require('fs');
 const assert = require('assert');
+const { extractListing } = require('../index');
 
 const pageDE = fs.readFileSync('./mocks/100-best-tv-shows-on-netflix-germany.html', 'utf-8');
 const pageNL = fs.readFileSync('./mocks/100-best-tv-shows-on-netflix-netherlands.html', 'utf-8');
 
-const extractListing = (content) => {
+const extractListing2 = (content) => {
     // regexp for the json blob.
     let ampJson = content.split('<script type="application/ld+json">')[1];
     ampJson = ampJson.split('</script>')[0];

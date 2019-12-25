@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "node test/compare.js"
+        "test": "node test/compare.js",
+        "dev": "python -m SimpleHTTPServer"
     },
     "repository": {
         "type": "git",
