@@ -1,0 +1,23 @@
+{
+    "name": "flixcompare",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "node test/compare.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mvoncken/flixcompare.git"
+    },
+    "author": "mvoncken@gmail.com",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mvoncken/flixcompare/issues"
+    },
+    "homepage": "https://github.com/mvoncken/flixcompare#readme",
+    "devDependencies": {
+        "eslint": "^6.8.0",
+        "eslint-config-alloy": "^3.4.0"
+    }
+}
