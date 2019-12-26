@@ -1,11 +1,22 @@
 // no frameworks, no imports.
+// no error handling, staying below 100 lines is the challenge.
+const apiPrefix = 'https://wldf5e9vl5.execute-api.eu-west-1.amazonaws.com/dev/list?list=';
 
+// == Logic section ==
 const extractListing = (content) => {
-    // regexp for the json blob.
+    // extracts listing from html page
     let ampJson = content.split('<script type="application/ld+json">')[1];
     ampJson = ampJson.split('</script>')[0];
     const amp = JSON.parse(ampJson);
     return amp.itemListElement.map((item) => item.url);
+};
+
+const fetchList = async (country) => {
+    // todo: state display and error handling.
+    // this is a <100 line project, adding logic to a proxy(extractListing) would break my goal.
+    const url = `${apiPrefix}100-best-tv-shows-on-netflix-${country}/`.replace('-usa/', '');
+    const page = await (await fetch(url)).text();
+    return extractListing(page);
 };
 
 const diffListing = (listA, listB) => {
@@ -20,6 +31,7 @@ const diffListing = (listA, listB) => {
     return { a, b, _debug: { lastA, lastB, lastCommon } };
 };
 
+// == UI section ==
 const el = (id) => document.getElementById(id);
 const renderItems = (parent, items) => {
     parent.innerHTML = '';
@@ -28,38 +40,57 @@ const renderItems = (parent, items) => {
         const li = document.createElement('li');
         const a = document.createElement('a');
         a.href = url;
+        a.target = '_blank';
         a.innerText = url.match(/([^\/]*)\/*$/)[1].replace(/-/g, ' ');
         li.appendChild(a);
         parent.appendChild(li);
     });
 };
+
+const sync = (state) => {
+    state.a.diff = [];
+    state.b.diff = [];
+    if (state.a.list.length && state.b.list.length) {
+        const diff = diffListing(state.a.list, state.b.list);
+        state.a.diff = diff.a;
+        state.b.diff = diff.b;
+    }
+    render(state);
+};
 const render = (state) => {
+    console.log('render: state=', state);
     el('countryA').innerText = state.a.country;
     el('countryB').innerText = state.b.country;
+    el('statusA').innerText = state.a.status;
+    el('statusB').innerText = state.b.status;
     renderItems(el('diffA'), state.a.diff);
     renderItems(el('diffB'), state.b.diff);
 };
 
-const fetchList = async (country) => {
-    // todo: state display and error handling.
-    const page = await (await fetch(`./mocks/100-best-tv-shows-on-netflix-${country}.html`)).text();
-    console.log(page);
-    return extractListing(page);
+const handleCountryChange = async (ab, value, state) => {
+    const cState = state[ab];
+    cState.country = value;
+    cState.status = 'Pending....';
+    cState.list = [];
+    sync(state);
+    cState.list = await fetchList(cState.country);
+    cState.status = '';
+    sync(state);
 };
 
 const init = async () => {
     const state = {
-        a: { country: 'germany', list: [] },
-        b: { country: 'netherlands', list: [] }
+        a: { country: 'germany', list: [], diff: [], status: 'init?!' },
+        b: { country: 'netherlands', list: [], diff: [], status: 'init?!' }
     };
-    // render(state);
-    state.a.list = await fetchList(state.a.country);
-    state.b.list = await fetchList(state.b.country);
-    const diff = diffListing(state.a.list, state.b.list);
-    state.a.diff = diff.a;
-    state.b.diff = diff.b;
-    render(state);
+    handleCountryChange('a', 'germany', state);
+    handleCountryChange('b', 'netherlands', state);
+    el('selectA').addEventListener('change', (e) =>
+        handleCountryChange('a', e.target.value, state)
+    );
+    el('selectB').addEventListener('change', (e) =>
+        handleCountryChange('b', e.target.value, state)
+    );
 };
 
 init();
-//module.exports = { extractListing, diffListing };

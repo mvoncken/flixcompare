@@ -27,10 +27,25 @@ Visiting my parents in NL, what should I watch here?
 -   add index.html
 -   fetch 2 countries from mocks
 -   display diff
--   push to github pages
+-   push to github pages (Fail->has to be username.github.io; try netlify?)
 
-# b3 : Ui with live data
+# b2 : handle CORS/api
 
-## b3+
+-   cors proxy or lambda
+-   fetch from live data
+
+## b3 : functional Ui
+
+-   select A+B for 2+ countries
+-   select category
+-   handle updates
+
+## b4 :
+
+-   complete data lists
+-   Static hosting; netlify?
 
 # TODO
+
+-   styling
+-   remove or fix tests
