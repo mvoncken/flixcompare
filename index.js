@@ -1,5 +1,5 @@
-// no frameworks, no imports.
-// no error handling, staying below 100 lines is the challenge.
+// No frameworks, no imports, no error handling, staying below 100 lines is the challenge.
+// You want to expand functionality? PLEASE STOP NOW, rewerite and use a proper framework.
 const apiPrefix = 'https://wldf5e9vl5.execute-api.eu-west-1.amazonaws.com/dev/list?list=';
 
 // == Logic section ==
@@ -10,19 +10,17 @@ const extractListing = (content) => {
     const amp = JSON.parse(ampJson);
     return amp.itemListElement.map((item) => item.url);
 };
-
-const fetchList = async (country) => {
+const fetchList = async (category, country) => {
     // todo: state display and error handling.
     // this is a <100 line project, adding logic to a proxy(extractListing) would break my goal.
-    const url = `${apiPrefix}100-best-tv-shows-on-netflix-${country}/`.replace('-usa/', '');
+    const url = `${apiPrefix}${category}-${country}/`.replace('-usa/', '');
     const page = await (await fetch(url)).text();
     return extractListing(page);
 };
-
 const diffListing = (listA, listB) => {
-    // the lists are capped at max 100 or 50;
+    // The lists are capped at max 100 or 50;
     // Find the last they have in common first and crop lists
-    // that last one could be a false negative.
+    // That last one could be a false negative.
     const lastA = listA.map((x) => listB.includes(x)).lastIndexOf(true);
     const lastB = listB.map((x) => listA.includes(x)).lastIndexOf(true);
     const a = listA.slice(0, lastA).filter((x) => !listB.includes(x));
@@ -32,7 +30,13 @@ const diffListing = (listA, listB) => {
 };
 
 // == UI section ==
-const el = (id) => document.getElementById(id);
+const state = {
+    category: '100-best-tv-shows-on-netflix',
+    a: { country: 'germany', list: [], diff: [], status: 'init?!' },
+    b: { country: 'netherlands', list: [], diff: [], status: 'init?!' }
+};
+
+const el = (id) => document.getElementById(id); // helper
 const renderItems = (parent, items) => {
     parent.innerHTML = '';
     items.forEach((url) => {
@@ -42,12 +46,10 @@ const renderItems = (parent, items) => {
         a.href = url;
         a.target = '_blank';
         a.innerText = url.match(/([^\/]*)\/*$/)[1].replace(/-/g, ' ');
-        li.appendChild(a);
-        parent.appendChild(li);
+        li.appendChild(a) && parent.appendChild(li);
     });
 };
-
-const sync = (state) => {
+const sync = () => {
     state.a.diff = [];
     state.b.diff = [];
     if (state.a.list.length && state.b.list.length) {
@@ -57,8 +59,9 @@ const sync = (state) => {
     }
     render(state);
 };
-const render = (state) => {
+const render = () => {
     console.log('render: state=', state);
+    el('categoryTitle').innerText = state.category;
     el('countryA').innerText = state.a.country;
     el('countryB').innerText = state.b.country;
     el('statusA').innerText = state.a.status;
@@ -66,31 +69,28 @@ const render = (state) => {
     renderItems(el('diffA'), state.a.diff);
     renderItems(el('diffB'), state.b.diff);
 };
-
-const handleCountryChange = async (ab, value, state) => {
+const handleCountryChange = async (ab, value) => {
     const cState = state[ab];
     cState.country = value;
     cState.status = 'Pending....';
     cState.list = [];
     sync(state);
-    cState.list = await fetchList(cState.country);
+    cState.list = await fetchList(state.category, cState.country);
     cState.status = '';
     sync(state);
 };
-
+const handleCategoryChange = async (value) => {
+    state.category = value;
+    sync();
+    handleCountryChange('a', state.a.country);
+    handleCountryChange('b', state.b.country);
+};
 const init = async () => {
-    const state = {
-        a: { country: 'germany', list: [], diff: [], status: 'init?!' },
-        b: { country: 'netherlands', list: [], diff: [], status: 'init?!' }
-    };
-    handleCountryChange('a', 'germany', state);
-    handleCountryChange('b', 'netherlands', state);
-    el('selectA').addEventListener('change', (e) =>
-        handleCountryChange('a', e.target.value, state)
-    );
-    el('selectB').addEventListener('change', (e) =>
-        handleCountryChange('b', e.target.value, state)
-    );
+    handleCountryChange('a', state.a.country);
+    handleCountryChange('b', state.b.country);
+    el('selectA').addEventListener('change', (e) => handleCountryChange('a', e.target.value));
+    el('selectB').addEventListener('change', (e) => handleCountryChange('b', e.target.value));
+    el('category').addEventListener('change', (e) => handleCategoryChange(e.target.value));
 };
 
 init();

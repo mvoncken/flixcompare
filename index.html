@@ -4,21 +4,33 @@
             body {
                 font-family: 'Libre Franklin', 'Helvetica Neue', helvetica, arial, sans-serif;
             }
-            .items > li > a {
-                text-transform: capitalize;
-            }
-            .country {
+            .items > li > a,
+            .countryName {
                 text-transform: capitalize;
             }
             .status {
-                color: pink;
+                color: fuchsia;
+            }
+            .uibox {
+                background-color: #eef;
+                font-size: 14px;
+            }
+            .uibox select {
+                font-size: 20px;
             }
         </style>
     </head>
     <body>
         <h1>Compare netflix content between 2 countries</h1>
 
-        <div>
+        <div class="uibox">
+            Category:
+            <select id="category">
+                <option>100-best-tv-shows-on-netflix</option>
+                <option>100-best-movies-on-netflix</option>
+                <option>100-best-netflix-originals</option>
+            </select>
+            <br />
             country A:<select id="selectA">
                 <option>germany</option>
                 <option>netherlands</option>
@@ -26,16 +38,20 @@
             </select>
             <br />
             country B:<select id="selectB">
-                <option>germany</option>
                 <option>netherlands</option>
+                <option>germany</option>
                 <option>usa</option>
             </select>
         </div>
-
-        <h2>only available in : <span id="countryA">select a country</span></h2>
+        <h1 id="categoryTitle">Please fill in the form above</h1>
+        <h2>
+            A) only available in : <span id="countryA" class="countryName">select a country</span>
+        </h2>
         <h3 id="statusA" class="status"></h3>
         <ul id="diffA" class="items"></ul>
-        <h2>only available in : <span id="countryB">select a country</span></h2>
+        <h2>
+            B) only available in : <span id="countryB" class="countryName">select a country</span>
+        </h2>
         <h3 id="statusB" class="status"></h3>
 
         <ul></ul>
