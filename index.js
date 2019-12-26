@@ -1,14 +1,13 @@
+/* eslint-disable no-undef */
 // No frameworks, no imports, no error handling, staying below 100 lines is the challenge.
-// You want to expand functionality? PLEASE STOP NOW, rewerite and use a proper framework.
+// You want to expand functionality? PLEASE STOP NOW, rewrite and use a proper framework.
 const apiPrefix = 'https://wldf5e9vl5.execute-api.eu-west-1.amazonaws.com/dev/list?list=';
-
 // == Logic section ==
 const extractListing = (content) => {
     // extracts listing from html page
     let ampJson = content.split('<script type="application/ld+json">')[1];
-    ampJson = ampJson.split('</script>')[0];
-    const amp = JSON.parse(ampJson);
-    return amp.itemListElement.map((item) => item.url);
+    ampJson = JSON.parse(ampJson.split('</script>')[0]);
+    return ampJson.itemListElement.map((item) => item.url);
 };
 const fetchList = async (category, country) => {
     // todo: state display and error handling.
@@ -19,28 +18,23 @@ const fetchList = async (category, country) => {
 };
 const diffListing = (listA, listB) => {
     // The lists are capped at max 100 or 50;
-    // Find the last they have in common first and crop lists
-    // That last one could be a false negative.
+    // Find the last they have in common first and crop lists. That last one could be a false negative.
     const lastA = listA.map((x) => listB.includes(x)).lastIndexOf(true);
     const lastB = listB.map((x) => listA.includes(x)).lastIndexOf(true);
     const a = listA.slice(0, lastA).filter((x) => !listB.includes(x));
     const b = listB.slice(0, lastB).filter((x) => !listA.includes(x));
-    const lastCommon = listA[lastA];
-    return { a, b, _debug: { lastA, lastB, lastCommon } };
+    return { a, b, _debug: { lastA, lastB } };
 };
-
 // == UI section ==
 const state = {
     category: '100-best-tv-shows-on-netflix',
-    a: { country: 'germany', list: [], diff: [], status: 'init?!' },
-    b: { country: 'netherlands', list: [], diff: [], status: 'init?!' }
+    a: { country: 'Germany', list: [], diff: [], status: 'init?!' },
+    b: { country: 'Netherlands', list: [], diff: [], status: 'init?!' }
 };
-
 const el = (id) => document.getElementById(id); // helper
 const renderItems = (parent, items) => {
     parent.innerHTML = '';
     items.forEach((url) => {
-        // whish i had templates here
         const li = document.createElement('li');
         const a = document.createElement('a');
         a.href = url;
@@ -48,6 +42,14 @@ const renderItems = (parent, items) => {
         a.innerText = url.match(/([^\/]*)\/*$/)[1].replace(/-/g, ' ');
         li.appendChild(a) && parent.appendChild(li);
     });
+};
+const renderSelect = (parent, items, initValue) => {
+    items.forEach((item) => {
+        const opt = document.createElement('option');
+        opt.innerText = item;
+        parent.appendChild(opt);
+    });
+    parent.value = initValue;
 };
 const sync = () => {
     state.a.diff = [];
@@ -75,22 +77,23 @@ const handleCountryChange = async (ab, value) => {
     cState.status = 'Pending....';
     cState.list = [];
     sync(state);
-    cState.list = await fetchList(state.category, cState.country);
+    cState.list = await fetchList(state.category, cState.country.toLowerCase());
     cState.status = '';
     sync(state);
 };
 const handleCategoryChange = async (value) => {
     state.category = value;
-    sync();
     handleCountryChange('a', state.a.country);
     handleCountryChange('b', state.b.country);
 };
 const init = async () => {
+    renderSelect(el('selectA'), COUNTRIES, state.a.country);
+    renderSelect(el('selectB'), COUNTRIES, state.b.country);
+    renderSelect(el('category'), CATEGORIES, state.category);
     handleCountryChange('a', state.a.country);
     handleCountryChange('b', state.b.country);
     el('selectA').addEventListener('change', (e) => handleCountryChange('a', e.target.value));
     el('selectB').addEventListener('change', (e) => handleCountryChange('b', e.target.value));
     el('category').addEventListener('change', (e) => handleCategoryChange(e.target.value));
 };
-
 init();

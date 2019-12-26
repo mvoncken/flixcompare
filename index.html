@@ -5,7 +5,8 @@
                 font-family: 'Libre Franklin', 'Helvetica Neue', helvetica, arial, sans-serif;
             }
             .items > li > a,
-            .countryName {
+            .countryName,
+            option {
                 text-transform: capitalize;
             }
             .status {
@@ -27,21 +28,11 @@
             Category:
             <select id="category">
                 <option>100-best-tv-shows-on-netflix</option>
-                <option>100-best-movies-on-netflix</option>
-                <option>100-best-netflix-originals</option>
             </select>
             <br />
-            country A:<select id="selectA">
-                <option>germany</option>
-                <option>netherlands</option>
-                <option>usa</option>
-            </select>
+            country A:<select id="selectA"> </select>
             <br />
-            country B:<select id="selectB">
-                <option>netherlands</option>
-                <option>germany</option>
-                <option>usa</option>
-            </select>
+            country B:<select id="selectB"> </select>
         </div>
         <h1 id="categoryTitle">Please fill in the form above</h1>
         <h2>
@@ -56,6 +47,7 @@
 
         <ul></ul>
         <ul id="diffB" class="items"></ul>
+        <script src="./data.js"></script>
         <script src="./index.js"></script>
     </body>
 </html>

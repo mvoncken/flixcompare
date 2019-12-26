@@ -33,6 +33,7 @@ Visiting my parents in NL, what should I watch here?
 
 -   cors proxy or lambda
 -   fetch from live data
+-   https://wldf5e9vl5.execute-api.eu-west-1.amazonaws.com/dev/list?list=100-best-tv-shows-on-netflix-germany
 
 ## b3 : functional Ui
 
