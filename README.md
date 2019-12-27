@@ -16,9 +16,9 @@ Audience : People that travel and are into netfix, but not enough to use a VPN.
 
 # DEV : About
 
--   KISS and YANGI to the extreme, Kept it really simple as a proof of concept.
+-   KISS and YANGI to the extreme.
 -   No frameworks because it's a challenge and makes it easier to steal this idea.
--   Defining the rules for a max-100-lines-project on the go, i feel like 100js + 100-html + 100-data fits the spirit.
+-   Defining the rules for a **max-100-lines-project** on the go; ~100js + ~100-html + ~100-data fits the spirit of those rules.
 
 # DEV : max-100-lines-project
 
