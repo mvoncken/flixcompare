@@ -1,17 +1,4 @@
-Goal : Compare 2 countries in netflix
-Please steal this idea.
-
-Visiting my parents in NL, what should I watch here?
-
 # MVP
-
--   KISS and YANGI to the extreme
-    -   tech demo/ not production.
--   publish on github pages
--   display diff between country a/b on best tv show(100) : (`https://www.flixwatch.co/lists/100-best-tv-shows-on-netflix-germany/)`
--   select for country a/b
--   select for section
--   node install, npm build npm publish
 
 # Planning/execution
 
@@ -41,12 +28,6 @@ Visiting my parents in NL, what should I watch here?
 -   select category
 -   handle updates
 
-## b4 :
+## b4 : ?
 
--   complete data lists
--   Static hosting; netlify?
-
-# TODO
-
--   styling
--   remove or fix tests
+-   into the flow, it's unstructured here.
